@@ -1,15 +1,23 @@
 import styles from './styles.module.scss'
 
 import { useSession, signIn } from 'next-auth/client'
+
 import { api } from '../../services/api'
 import { getStripeJs } from '../../services/stripe-js'
+
+import { useRouter } from 'next/router'
 
 type ButtonProps = {
   priceId: string
 }
 
 export function SubscribeButton({ priceId }: ButtonProps) {
-  const [session] = useSession()
+  const [session] = useSession() as any
+  const { push } = useRouter()
+
+  if (session?.activeSubscription) {
+    push("/posts")
+  }
 
   async function handleSubscription() {
     if (!session) {
